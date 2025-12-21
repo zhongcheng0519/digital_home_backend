@@ -23,6 +23,10 @@ wheels/
 .installed.cfg
 *.egg
 
+# uv (Modern Python package manager)
+.venv/
+uv.lock
+
 # Environment
 .env
 .env.local

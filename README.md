@@ -1,71 +1,85 @@
 # Digital Home Backend (数字家)
 
-A privacy-focused family asset management backend with **Zero-Knowledge End-to-End Encryption**.
+一个专注于隐私的家庭资产管理后端，支持**零知识端到端加密**。
 
-## 🔐 Security Philosophy
+## 🔐 安全理念
 
-The server **NEVER** has access to decryption keys. All sensitive data is encrypted on the client side:
-- User private keys are encrypted with user passwords
-- Family shared keys are encrypted with RSA public keys
-- Event content is encrypted with family AES keys
+服务器**永远不会**拥有解密密钥。所有敏感数据都在客户端进行加密：
+- 用户私钥使用用户密码加密
+- 家庭共享密钥使用 RSA 公钥加密
+- 事件内容使用家庭 AES 密钥加密
 
-## 🚀 Tech Stack
+## 🚀 技术栈
 
 - **Python**: 3.10+
-- **Web Framework**: FastAPI
-- **Database ORM**: SQLModel
-- **Database**: PostgreSQL (asyncpg driver)
-- **Migrations**: Alembic
-- **Authentication**: JWT (python-jose)
-- **Password Hashing**: bcrypt (passlib)
+- **包管理器**: uv (现代 Python 包管理工具)
+- **Web 框架**: FastAPI
+- **数据库 ORM**: SQLModel
+- **数据库**: PostgreSQL (asyncpg 驱动)
+- **迁移工具**: Alembic
+- **身份认证**: JWT (python-jose)
+- **密码哈希**: bcrypt (passlib)
 
-## 📁 Project Structure
+## 📁 项目结构
 
 ```
 backend/
 ├── app/
-│   ├── main.py              # FastAPI app entry
+│   ├── main.py              # FastAPI 应用入口
 │   ├── core/
-│   │   ├── config.py        # Settings
-│   │   └── security.py      # JWT & password utilities
+│   │   ├── config.py        # 配置设置
+│   │   └── security.py      # JWT 和密码工具
 │   ├── db/
-│   │   ├── session.py       # Async DB session
-│   │   └── init_db.py       # Database initialization
-│   ├── models/              # SQLModel classes
+│   │   ├── session.py       # 异步数据库会话
+│   │   └── init_db.py       # 数据库初始化
+│   ├── models/              # SQLModel 类
 │   │   ├── user.py
 │   │   ├── family.py
 │   │   └── milestone.py
 │   └── api/
-│       ├── deps.py          # Dependencies (auth)
+│       ├── deps.py          # 依赖注入 (身份认证)
 │       └── v1/
-│           ├── api.py       # Router setup
+│           ├── api.py       # 路由配置
 │           └── endpoints/
 │               ├── auth.py
 │               ├── family.py
 │               └── milestone.py
-├── alembic/                 # Database migrations
-├── requirements.txt
+├── alembic/                 # 数据库迁移
+├── pyproject.toml           # uv 项目配置和依赖管理
 ├── .env.example
 └── README.md
 ```
 
-## 🛠️ Setup
+## 🛠️ 安装设置
 
-### 1. Install Dependencies
+### 1. 安装依赖
+
+**使用 uv（推荐）：**
 
 ```bash
-pip install -r requirements.txt
+# 安装项目依赖
+uv sync
+
+# 或者只安装生产依赖
+uv sync --no-dev
 ```
 
-### 2. Configure Environment
+**使用传统 pip（备选）：**
 
-Copy `.env.example` to `.env` and update the values:
+```bash
+# 如果你还没有迁移到 uv，可以从备份文件安装
+pip install -r requirements.txt.bak
+```
+
+### 2. 配置环境
+
+将 `.env.example` 复制到 `.env` 并更新配置：
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env`:
+编辑 `.env`:
 ```
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/digital_home
 SECRET_KEY=your-secret-key-change-this-in-production
@@ -73,96 +87,96 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=10080
 ```
 
-### 3. Setup Database
+### 3. 设置数据库
 
-Make sure PostgreSQL is running and create the database:
+确保 PostgreSQL 正在运行并创建数据库：
 
 ```bash
 createdb digital_home
 ```
 
-### 4. Run Migrations (Optional)
+### 4. 运行迁移（可选）
 
-If you want to use Alembic for migrations:
+如果你想使用 Alembic 进行迁移：
 
 ```bash
-# Initialize migrations
+# 初始化迁移
 alembic revision --autogenerate -m "Initial migration"
 
-# Apply migrations
+# 应用迁移
 alembic upgrade head
 ```
 
-**Note**: The app will auto-create tables on startup using `SQLModel.metadata.create_all()`.
+**注意**：应用启动时将使用 `SQLModel.metadata.create_all()` 自动创建表。
 
-### 5. Run the Server
+### 5. 运行服务器
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-The API will be available at: `http://localhost:8000`
+API 将在以下地址可用：`http://localhost:8000`
 
-API Documentation: `http://localhost:8000/docs`
+API 文档：`http://localhost:8000/docs`
 
-## 📡 API Endpoints
+## 📡 API 接口
 
-### Authentication (`/api/v1/auth`)
+### 身份认证 (`/api/v1/auth`)
 
-- `POST /register` - Register a new user
-- `POST /login` - Login and get JWT token
+- `POST /register` - 注册新用户
+- `POST /login` - 登录并获取 JWT 令牌
 
-### Family Management (`/api/v1/family`)
+### 家庭管理 (`/api/v1/family`)
 
-- `POST /` - Create a new family
-- `POST /member` - Add a member to family
-- `GET /my` - Get all families user belongs to
+- `POST /` - 创建新家庭
+- `POST /member` - 添加家庭成员
+- `GET /my` - 获取用户所属的所有家庭
 
-### Milestones (`/api/v1/milestone`)
+### 里程碑 (`/api/v1/milestone`)
 
-- `POST /` - Create a milestone
-- `GET /?family_id=X&year=YYYY` - List milestones (filtered by family and optionally by year)
+- `POST /` - 创建里程碑
+- `GET /?family_id=X&year=YYYY` - 列出里程碑（按家庭过滤，可选择按年份）
 
-## 🔑 Authentication Flow
+## 🔑 身份认证流程
 
-1. **Register**: Client generates RSA key pair, encrypts private key with password, sends public key and encrypted private key to server
-2. **Login**: Server validates credentials, returns JWT token and user info (including encrypted keys)
-3. **Authenticated Requests**: Include JWT token in `Authorization: Bearer <token>` header
+1. **注册**：客户端生成 RSA 密钥对，用密码加密私钥，向服务器发送公钥和加密后的私钥
+2. **登录**：服务器验证凭据，返回 JWT 令牌和用户信息（包括加密的密钥）
+3. **认证请求**：在 `Authorization: Bearer <token>` 头中包含 JWT 令牌
 
-## 🗄️ Database Schema
+## 🗄️ 数据库架构
 
 ### User
-- `id`, `phone` (unique), `username`, `hashed_password`
-- `public_key` (RSA Public Key, PEM)
-- `encrypted_private_key` [CIPHER] (RSA Private Key encrypted by password)
+- `id`, `phone` (唯一), `username`, `hashed_password`
+- `public_key` (RSA 公钥, PEM)
+- `encrypted_private_key` [CIPHER] (密码加密的 RSA 私钥)
 
 ### Family
 - `id`, `name`, `owner_id`
 
 ### FamilyMember
-- `family_id`, `user_id` (composite PK)
-- `role` ("owner" or "member")
-- `encrypted_family_key` [CIPHER] (AES Family Key encrypted by User's Public Key)
+- `family_id`, `user_id` (复合主键)
+- `role` ("owner" 或 "member")
+- `encrypted_family_key` [CIPHER] (用户公钥加密的 AES 家庭密钥)
 
 ### Milestone
 - `id`, `family_id`, `creator_id`
-- `event_date` (plain date for sorting)
-- `content_ciphertext` [CIPHER] (content encrypted by Family AES Key)
+- `event_date` (用于排序的纯日期)
+- `content_ciphertext` [CIPHER] (家庭 AES 密钥加密的内容)
 - `created_at`
 
-## 🔒 Encryption Model
+## 🔒 加密模型
 
-**[CIPHER]** fields are encrypted on the client and treated as opaque strings by the server.
+**[CIPHER]** 字段在客户端加密，被服务器视为不透明的字符串。
 
-1. User creates password → derives encryption key
-2. User generates RSA key pair
-3. Private key encrypted with password-derived key
-4. Family owner generates AES family key
-5. Family key encrypted with each member's RSA public key
-6. Milestone content encrypted with family AES key
+1. 用户创建密码 → 派生加密密钥
+2. 用户生成 RSA 密钥对
+3. 私钥用密码派生的密钥加密
+4. 家庭所有者生成 AES 家庭密钥
+5. 家庭密钥用每个成员的 RSA 公钥加密
+6. 里程碑内容用家庭 AES 密钥加密
 
-The server **never** sees plaintext sensitive data.
+服务器**永远**不会看到明文敏感数据。
 
-## 📝 License
+## 📝 许可证
 
-Private project for Digital Home (数字家).
+Digital Home (数字家) 私有项目。
