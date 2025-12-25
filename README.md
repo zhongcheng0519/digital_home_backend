@@ -64,13 +64,6 @@ uv sync
 uv sync --no-dev
 ```
 
-**使用传统 pip（备选）：**
-
-```bash
-# 如果你还没有迁移到 uv，可以从备份文件安装
-pip install -r requirements.txt.bak
-```
-
 ### 2. 配置环境
 
 将 `.env.example` 复制到 `.env` 并更新配置：

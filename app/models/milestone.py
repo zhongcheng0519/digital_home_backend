@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import date, datetime
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Column, String
 
 
 class Milestone(SQLModel, table=True):
@@ -10,5 +10,5 @@ class Milestone(SQLModel, table=True):
     family_id: int = Field(foreign_key="family.id", index=True)
     creator_id: int = Field(foreign_key="user.id")
     event_date: date
-    content_ciphertext: str = Field(sa_column_kwargs={"type_": "Text"})
+    content_ciphertext: str = Field(sa_column=Column(String))
     created_at: datetime = Field(default_factory=datetime.utcnow)

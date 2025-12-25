@@ -71,8 +71,9 @@ async def create_milestone(
 async def get_milestones(
     family_id: int = Query(...),
     year: Optional[int] = Query(None),
-    current_user: Annotated[User, Depends(get_current_user)] = Depends(),
-    session: Annotated[AsyncSession, Depends(get_session)] = Depends()
+    *,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)]
 ):
     result = await session.execute(
         select(FamilyMember).where(

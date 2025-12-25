@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Column, String
 
 
 class Family(SQLModel, table=True):
@@ -16,4 +16,4 @@ class FamilyMember(SQLModel, table=True):
     family_id: int = Field(foreign_key="family.id", primary_key=True)
     user_id: int = Field(foreign_key="user.id", primary_key=True)
     role: str = Field(default="member")
-    encrypted_family_key: str = Field(sa_column_kwargs={"type_": "Text"})
+    encrypted_family_key: str = Field(sa_column=Column(String))

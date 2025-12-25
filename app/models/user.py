@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Column, String
 
 
 class User(SQLModel, table=True):
@@ -9,5 +9,5 @@ class User(SQLModel, table=True):
     phone: str = Field(unique=True, index=True)
     username: str
     hashed_password: str
-    public_key: str = Field(sa_column_kwargs={"type_": "Text"})
-    encrypted_private_key: str = Field(sa_column_kwargs={"type_": "Text"})
+    public_key: str = Field(sa_column=Column(String))
+    encrypted_private_key: str = Field(sa_column=Column(String))
