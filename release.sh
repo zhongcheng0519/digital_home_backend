@@ -15,8 +15,6 @@ build_docker_image() {
     echo "Building Docker image ${IMAGE_NAME}:${version}..."
     docker build -t "${IMAGE_NAME}:${version}" .
 
-    docker tag "${IMAGE_NAME}:${version}" "${IMAGE_NAME}:latest"
-
     echo "Docker image built successfully: ${IMAGE_NAME}:${version}"
 }
 
@@ -28,9 +26,6 @@ push_docker_image() {
     
     docker tag "${IMAGE_NAME}:${version}" "${registry}/${IMAGE_NAME}:${version}"
     docker push "${registry}/${IMAGE_NAME}:${version}"
-    
-    docker tag "${IMAGE_NAME}:${version}" "${registry}/${IMAGE_NAME}:latest"
-    docker push "${registry}/${IMAGE_NAME}:latest"
 
     echo "Docker image pushed successfully"
 }
@@ -49,7 +44,8 @@ show_usage() {
     echo "  - Docker tag always equals the version from pyproject.toml"
     echo "  - Latest tag is automatically created for every build"
     echo ""
-    echo "Examples:"
+    echo "Examples:""
+    echo "  - Latest tag is automatically created for every build
     echo "  $0 get-version"
     echo "  $0 build"
     echo "  $0 push docker.io/username"
