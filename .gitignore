@@ -30,6 +30,7 @@ uv.lock
 # Environment
 .env
 .env.local
+.env.prod
 
 # IDEs
 .vscode/

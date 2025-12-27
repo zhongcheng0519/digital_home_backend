@@ -234,6 +234,56 @@ API 文档：`http://localhost:8000/docs`
 - ✅ 家庭成员离开后，只需删除其加密的家庭密钥即可撤销访问权限
 - ✅ 新成员加入时，无需重新加密现有数据，只需为其加密家庭密钥
 
+## 🐳 Docker 部署
+
+### 快速开始（本地开发）
+
+```bash
+# 启动所有服务（数据库 + 应用）
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+### 生产环境部署
+
+详细的部署指南请参考 [DEPLOYMENT.md](DEPLOYMENT.md)。
+
+快速部署步骤：
+
+```bash
+# 1. 配置环境变量
+cp .env.prod.example .env.prod
+# 编辑 .env.prod 设置生产环境参数
+
+# 2. 构建镜像
+./release.sh build v1.0.0
+
+# 3. 启动生产环境
+docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d
+```
+
+### 版本管理
+
+使用 `release.sh` 脚本进行版本管理：
+
+```bash
+# 查看当前版本
+./release.sh get-version
+
+# 增加版本号
+./release.sh bump patch    # 1.0.0 -> 1.0.1
+./release.sh bump minor    # 1.0.0 -> 1.1.0
+./release.sh bump major    # 1.0.0 -> 2.0.0
+
+# 完整发布流程（构建 + 推送）
+./release.sh release minor docker.io/your-username
+```
+
 ## 📝 许可证
 
 Digital Home (数字家) 私有项目。
