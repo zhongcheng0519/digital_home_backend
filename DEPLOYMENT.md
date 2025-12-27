@@ -149,83 +149,18 @@ docker-compose -f docker-compose.prod.yml down
 ```
 
 这将：
-1. 自动增加版本号
-2. 更新 pyproject.toml
-3. 构建 Docker 镜像
-4. 推送到指定的镜像仓库
+1. 更新 pyproject.toml
+2. 构建 Docker 镜像
+3. 推送到指定的镜像仓库
 
 ### 分步发布
 
 ```bash
-# 1. 增加版本号
-./release.sh bump patch
+# 1. 构建镜像
+./release.sh build
 
-# 2. 构建镜像
-./release.sh build v1.0.1
-
-# 3. 推送到镜像仓库
-./release.sh push docker.io/your-username v1.0.1
-```
-
-## 云端部署
-
-### Docker Hub 部署
-
-1. 登录 Docker Hub：
-
-```bash
-docker login
-```
-
-2. 构建并推送镜像：
-
-```bash
-docker build -t your-username/digital-home-backend:v1.0.0 .
-docker push your-username/digital-home-backend:v1.0.0
-```
-
-3. 在服务器上拉取并运行：
-
-```bash
-docker pull your-username/digital-home-backend:v1.0.0
-docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d
-```
-
-### 阿里云容器镜像服务
-
-1. 登录阿里云容器镜像服务：
-
-```bash
-docker login --username=your-username registry.cn-hangzhou.aliyuncs.com
-```
-
-2. 构建并推送镜像：
-
-```bash
-docker build -t registry.cn-hangzhou.aliyuncs.com/your-namespace/digital-home-backend:v1.0.0 .
-docker push registry.cn-hangzhou.aliyuncs.com/your-namespace/digital-home-backend:v1.0.0
-```
-
-3. 更新 `.env.prod` 中的 `IMAGE_NAME`：
-
-```env
-IMAGE_NAME=registry.cn-hangzhou.aliyuncs.com/your-namespace/digital-home-backend
-IMAGE_TAG=v1.0.0
-```
-
-### 腾讯云容器镜像服务
-
-1. 登录腾讯云容器镜像服务：
-
-```bash
-docker login --username=your-username ccr.ccs.tencentyun.com
-```
-
-2. 构建并推送镜像：
-
-```bash
-docker build -t ccr.ccs.tencentyun.com/your-namespace/digital-home-backend:v1.0.0 .
-docker push ccr.ccs.tencentyun.com/your-namespace/digital-home-backend:v1.0.0
+# 2. 推送到镜像仓库
+./release.sh push docker.io/your-username
 ```
 
 ## 数据库迁移
@@ -355,27 +290,9 @@ docker stats
 
 ## 常见问题
 
-### Q: 如何更新到新版本？
-
-A: 
-1. 拉取新镜像：`docker pull your-registry/digital-home-backend:v1.0.1`
-2. 更新 `.env.prod` 中的 `IMAGE_TAG`
-3. 重启服务：`docker-compose -f docker-compose.prod.yml up -d`
-
 ### Q: 如何查看数据库连接？
 
 A: 
 ```bash
 docker-compose exec db psql -U postgres -d digital_home
 ```
-
-### Q: 如何清理未使用的镜像？
-
-A: 
-```bash
-docker image prune -a
-```
-
-## 联系方式
-
-如有问题，请提交 Issue 或联系开发团队。

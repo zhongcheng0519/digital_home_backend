@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:17-alpine
@@ -21,9 +19,7 @@ services:
       - digital_home_network
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: zhongcheng0519/digital-home-backend:1.0.0
     container_name: digital_home_api
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-digital_home}
