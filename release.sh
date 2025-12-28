@@ -12,10 +12,10 @@ get_version() {
 build_docker_image() {
     local version=$(get_version)
 
-    echo "Building Docker image ${IMAGE_NAME}:${version}..."
-    docker build -t "${IMAGE_NAME}:${version}" .
+    echo "Building Docker image ${IMAGE_NAME}:${version} for linux/amd64..."
+    docker buildx build --platform linux/amd64 -t "${IMAGE_NAME}:${version}" --load .
 
-    echo "Docker image built successfully: ${IMAGE_NAME}:${version}"
+    echo "Docker image built successfully: ${IMAGE_NAME}:${version} (linux/amd64)"
 }
 
 push_docker_image() {
@@ -44,8 +44,7 @@ show_usage() {
     echo "  - Docker tag always equals the version from pyproject.toml"
     echo "  - Latest tag is automatically created for every build"
     echo ""
-    echo "Examples:""
-    echo "  - Latest tag is automatically created for every build
+    echo "Examples:"
     echo "  $0 get-version"
     echo "  $0 build"
     echo "  $0 push docker.io/username"
