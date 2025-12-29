@@ -363,7 +363,8 @@ def test_api_registration_data():
         "username": "test_user",
         "password": password,
         "public_key": public_key_pem,
-        "encrypted_private_key": encrypted_private_key
+        "encrypted_private_key": encrypted_private_key,
+        "private_key_salt": salt
     }
     
     print("注册请求数据:")
@@ -372,6 +373,7 @@ def test_api_registration_data():
     print(f"  password: {registration_data['password']}")
     print(f"  public_key: {registration_data['public_key'][:50]}...")
     print(f"  encrypted_private_key: {registration_data['encrypted_private_key'][:50]}...")
+    print(f"  private_key_salt: {registration_data['private_key_salt'][:50]}...")
     
     print("\n✓ API 注册数据格式正确\n")
 

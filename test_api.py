@@ -75,7 +75,8 @@ def test_registration_and_login():
         "username": "test_user",
         "password": password,
         "public_key": public_key_pem,
-        "encrypted_private_key": encrypted_private_key
+        "encrypted_private_key": encrypted_private_key,
+        "private_key_salt": salt
     }
     
     try:
@@ -116,6 +117,7 @@ def test_registration_and_login():
             print(f"  用户名: {user_info['username']}")
             print(f"  公钥: {user_info['public_key'][:50]}...")
             print(f"  加密的私钥: {user_info['encrypted_private_key'][:50]}...")
+            print(f"  私钥盐值: {user_info['private_key_salt'][:50]}...")
             
             print(f"\n访问令牌: {token[:50]}...")
             return token

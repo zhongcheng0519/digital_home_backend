@@ -43,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Added `private_key_salt` field to User model for secure key derivation
+- Updated registration API to accept and store `private_key_salt`
+- Updated login API to return `private_key_salt` for client-side decryption
+- Enhanced encryption flow documentation with PBKDF2 key derivation details
+
+### Security
+- Improved private key encryption with PBKDF2 and unique salt per user
+- Added salt-based key derivation to prevent rainbow table attacks
+- Updated encryption testing documentation with salt verification guidelines
+
 ### Planned
 - [ ] User profile management
 - [ ] File upload support

@@ -16,6 +16,7 @@ class RegisterRequest(BaseModel):
     password: str
     public_key: str
     encrypted_private_key: str
+    private_key_salt: str
 
 
 class LoginRequest(BaseModel):
@@ -29,6 +30,7 @@ class UserInfo(BaseModel):
     username: str
     public_key: str
     encrypted_private_key: str
+    private_key_salt: str
 
 
 class LoginResponse(BaseModel):
@@ -55,7 +57,8 @@ async def register(
         username=request.username,
         hashed_password=get_password_hash(request.password),
         public_key=request.public_key,
-        encrypted_private_key=request.encrypted_private_key
+        encrypted_private_key=request.encrypted_private_key,
+        private_key_salt=request.private_key_salt
     )
     session.add(user)
     await session.commit()
@@ -66,7 +69,8 @@ async def register(
         phone=user.phone,
         username=user.username,
         public_key=user.public_key,
-        encrypted_private_key=user.encrypted_private_key
+        encrypted_private_key=user.encrypted_private_key,
+        private_key_salt=user.private_key_salt
     )
 
 
@@ -93,6 +97,7 @@ async def login(
             phone=user.phone,
             username=user.username,
             public_key=user.public_key,
-            encrypted_private_key=user.encrypted_private_key
+            encrypted_private_key=user.encrypted_private_key,
+            private_key_salt=user.private_key_salt
         )
     )

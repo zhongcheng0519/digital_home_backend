@@ -11,3 +11,4 @@ class User(SQLModel, table=True):
     hashed_password: str
     public_key: str = Field(sa_column=Column(String))
     encrypted_private_key: str = Field(sa_column=Column(String))
+    private_key_salt: str = Field(sa_column=Column(String))

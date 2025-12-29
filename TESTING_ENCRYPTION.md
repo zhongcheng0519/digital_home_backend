@@ -78,7 +78,8 @@ curl -X POST "http://localhost:8000/api/v1/auth/register" \
     "username": "test_user",
     "password": "test_password_123",
     "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
-    "encrypted_private_key": "base64_encoded_encrypted_private_key"
+    "encrypted_private_key": "base64_encoded_encrypted_private_key",
+    "private_key_salt": "base64_encoded_salt"
   }'
 
 # 登录用户
@@ -166,6 +167,23 @@ A:
 2. 验证解密失败
 3. 验证无法获取家庭密钥
 4. 验证无法解密内容
+
+### Q: 为什么需要 private_key_salt？
+
+A: `private_key_salt` 是密钥派生函数（KDF）的重要组成部分：
+- **防止彩虹表攻击**：即使两个用户使用相同密码，不同的 salt 会产生不同的派生密钥
+- **保证唯一性**：每个用户的私钥加密都使用唯一的 salt
+- **解密必需**：客户端必须使用相同的 salt 才能从密码派生出相同的密钥来解密私钥
+- **安全性**：salt 随机生成，增加了暴力破解的难度
+
+### Q: 如何验证 salt 的正确性？
+
+A:
+1. 注册时生成并保存 salt
+2. 登录时从服务器获取 salt
+3. 使用相同的密码和 salt 派生密钥
+4. 验证能否成功解密私钥
+5. 使用错误的 salt 或密码应该无法解密
 
 ## 下一步
 
