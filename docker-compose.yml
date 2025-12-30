@@ -18,6 +18,19 @@ services:
     networks:
       - digital_home_network
 
+  migrate:
+    image: zhongcheng0519/digital-home-backend:1.0.0
+    container_name: digital_home_migrate
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-digital_home}
+    command: alembic upgrade head
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - digital_home_network
+    restart: "no"
+
   app:
     image: zhongcheng0519/digital-home-backend:1.0.0
     container_name: digital_home_api
@@ -31,6 +44,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 30s
