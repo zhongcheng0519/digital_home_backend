@@ -120,19 +120,79 @@ def test_registration_and_login():
             print(f"  私钥盐值: {user_info['private_key_salt'][:50]}...")
             
             print(f"\n访问令牌: {token[:50]}...")
-            return token
+            return token, public_key_pem
         else:
             print(f"✗ 用户登录失败\n")
-            return None
+            return None, None
     except requests.exceptions.ConnectionError:
         print("✗ 无法连接到服务器\n")
-        return None
+        return None, None
+
+
+def test_get_public_key(phone, expected_public_key):
+    """测试获取公钥"""
+    print("=" * 60)
+    print("测试获取公钥")
+    print("=" * 60 + "\n")
+    
+    print(f"测试获取用户 {phone} 的公钥...")
+    
+    try:
+        response = requests.get(f"{BASE_URL}/auth/public-key", params={"phone": phone})
+        print(f"响应状态码: {response.status_code}")
+        
+        if response.status_code == 200:
+            result = response.json()
+            print(f"响应: {result}")
+            
+            if result["public_key"] == expected_public_key:
+                print("\n✓ 获取公钥成功，公钥匹配\n")
+                return True
+            else:
+                print("\n✗ 获取公钥成功，但公钥不匹配\n")
+                return False
+        else:
+            print(f"✗ 获取公钥失败: {response.json()}\n")
+            return False
+    except requests.exceptions.ConnectionError:
+        print("✗ 无法连接到服务器\n")
+        return False
+
+
+def test_get_public_key_not_found():
+    """测试获取不存在用户的公钥"""
+    print("=" * 60)
+    print("测试获取不存在用户的公钥")
+    print("=" * 60 + "\n")
+    
+    print("测试获取不存在用户的公钥...")
+    
+    try:
+        response = requests.get(f"{BASE_URL}/auth/public-key", params={"phone": "99999999999"})
+        print(f"响应状态码: {response.status_code}")
+        
+        if response.status_code == 404:
+            print(f"响应: {response.json()}")
+            print("\n✓ 正确返回 404 错误\n")
+            return True
+        else:
+            print(f"✗ 预期返回 404，但实际返回: {response.status_code}\n")
+            return False
+    except requests.exceptions.ConnectionError:
+        print("✗ 无法连接到服务器\n")
+        return False
 
 
 if __name__ == "__main__":
-    token = test_registration_and_login()
+    token, public_key_pem = test_registration_and_login()
     
-    if token:
+    if token and public_key_pem:
+        # 测试获取公钥
+        test_get_public_key("13800138000", public_key_pem)
+        
+        # 测试获取不存在用户的公钥
+        test_get_public_key_not_found()
+        
         print("\n" + "=" * 60)
         print("✓ 所有 API 测试通过！")
         print("=" * 60)
