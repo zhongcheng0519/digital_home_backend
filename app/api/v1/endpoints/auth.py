@@ -43,6 +43,10 @@ class PublicKeyResponse(BaseModel):
     public_key: str
 
 
+class UsernameResponse(BaseModel):
+    username: str
+
+
 @router.get("/public-key", response_model=PublicKeyResponse)
 async def get_public_key(
     phone: str,
@@ -58,6 +62,23 @@ async def get_public_key(
         )
     
     return PublicKeyResponse(public_key=user.public_key)
+
+
+@router.get("/username", response_model=UsernameResponse)
+async def get_username(
+    user_id: int,
+    session: Annotated[AsyncSession, Depends(get_session)]
+):
+    result = await session.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return UsernameResponse(username=user.username)
 
 
 @router.post("/register", response_model=UserInfo)
