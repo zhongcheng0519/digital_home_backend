@@ -49,6 +49,16 @@ Digital Home 是一个基于 FastAPI 的数字家庭后端服务，实现了零�
 - `content_ciphertext`: 内容密文
 - `created_at`: 创建时间
 
+#### Todo (待办事项)
+- `id`: 待办事项ID
+- `family_id`: 家庭ID
+- `creator_id`: 创建者ID
+- `title_ciphertext`: 标题密文
+- `description_ciphertext`: 描述密文（可选）
+- `is_completed`: 是否完成
+- `created_at`: 创建时间
+- `updated_at`: 更新时间
+
 ---
 
 ## API 接口文档
@@ -346,6 +356,177 @@ GET /api/v1/milestone/?family_id=1&year=2024
 
 ---
 
+## 待办事项模块 (Todo)
+
+### 1. 创建待办事项
+
+**接口**: `POST /api/v1/todo/`
+
+**需要认证**: 是
+
+**权限**: 仅家庭成员可操作
+
+**请求参数**:
+```json
+{
+  "family_id": 1,
+  "title_ciphertext": "encrypted_title_base64",
+  "description_ciphertext": "encrypted_description_base64"
+}
+```
+
+**响应**:
+```json
+{
+  "id": 1,
+  "family_id": 1,
+  "creator_id": 1,
+  "title_ciphertext": "encrypted_title_base64",
+  "description_ciphertext": "encrypted_description_base64",
+  "is_completed": false,
+  "created_at": "2024-01-01T10:00:00",
+  "updated_at": "2024-01-01T10:00:00"
+}
+```
+
+**错误响应**:
+- `403 Forbidden`: 不是该家庭成员
+
+**说明**: 
+- `title_ciphertext` 是用家庭密钥加密的标题密文
+- `description_ciphertext` 是用家庭密钥加密的描述密文（可选）
+- 任意家庭成员都可以创建待办事项
+
+---
+
+### 2. 获取待办事项列表
+
+**接口**: `GET /api/v1/todo/`
+
+**需要认证**: 是
+
+**权限**: 仅家庭成员可查看
+
+**查询参数**:
+- `family_id` (必填): 家庭ID
+
+**请求示例**:
+```
+GET /api/v1/todo/?family_id=1
+```
+
+**响应**:
+```json
+[
+  {
+    "id": 2,
+    "family_id": 1,
+    "creator_id": 2,
+    "title_ciphertext": "encrypted_title_base64",
+    "description_ciphertext": "encrypted_description_base64",
+    "is_completed": false,
+    "created_at": "2024-01-02T09:00:00",
+    "updated_at": "2024-01-02T09:00:00"
+  },
+  {
+    "id": 1,
+    "family_id": 1,
+    "creator_id": 1,
+    "title_ciphertext": "encrypted_title_base64",
+    "description_ciphertext": "encrypted_description_base64",
+    "is_completed": true,
+    "created_at": "2024-01-01T10:00:00",
+    "updated_at": "2024-01-01T15:00:00"
+  }
+]
+```
+
+**错误响应**:
+- `403 Forbidden`: 不是该家庭成员
+
+**说明**: 
+- 结果按创建时间降序排列（最新的在前）
+- 返回该家庭的所有待办事项
+
+---
+
+### 3. 更新待办事项
+
+**接口**: `PUT /api/v1/todo/{todo_id}`
+
+**需要认证**: 是
+
+**权限**: 仅家庭成员可操作
+
+**路径参数**:
+- `todo_id` (必填): 待办事项ID
+
+**请求参数**:
+```json
+{
+  "title_ciphertext": "new_encrypted_title_base64",
+  "description_ciphertext": "new_encrypted_description_base64",
+  "is_completed": true
+}
+```
+
+**响应**:
+```json
+{
+  "id": 1,
+  "family_id": 1,
+  "creator_id": 1,
+  "title_ciphertext": "new_encrypted_title_base64",
+  "description_ciphertext": "new_encrypted_description_base64",
+  "is_completed": true,
+  "created_at": "2024-01-01T10:00:00",
+  "updated_at": "2024-01-01T15:00:00"
+}
+```
+
+**错误响应**:
+- `403 Forbidden`: 不是该家庭成员
+- `404 Not Found`: 待办事项不存在
+
+**说明**: 
+- 所有字段都是可选的，只更新提供的字段
+- 任意家庭成员都可以更新待办事项
+- 更新操作会自动更新 `updated_at` 时间戳
+
+---
+
+### 4. 删除待办事项
+
+**接口**: `DELETE /api/v1/todo/{todo_id}`
+
+**需要认证**: 是
+
+**权限**: 仅家庭成员可操作
+
+**路径参数**:
+- `todo_id` (必填): 待办事项ID
+
+**请求示例**:
+```
+DELETE /api/v1/todo/1
+```
+
+**响应**:
+```json
+{
+  "message": "Todo deleted successfully"
+}
+```
+
+**错误响应**:
+- `403 Forbidden`: 不是该家庭成员
+- `404 Not Found`: 待办事项不存在
+
+**说明**: 
+- 任意家庭成员都可以删除待办事项
+
+---
+
 ## 加密流程说明
 
 ### 注册流程
@@ -371,6 +552,18 @@ GET /api/v1/milestone/?family_id=1&year=2024
 
 1. 用家庭密钥加密里程碑内容，得到 `content_ciphertext`
 2. 发送创建里程碑请求
+
+### 创建待办事项流程
+
+1. 用家庭密钥加密待办事项标题，得到 `title_ciphertext`
+2. 用家庭密钥加密待办事项描述（如果有），得到 `description_ciphertext`
+3. 发送创建待办事项请求
+
+### 更新待办事项流程
+
+1. 用家庭密钥加密新的标题（如果更新），得到 `title_ciphertext`
+2. 用家庭密钥加密新的描述（如果更新），得到 `description_ciphertext`
+3. 发送更新待办事项请求
 
 ### 解密流程
 
