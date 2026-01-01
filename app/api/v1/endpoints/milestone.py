@@ -19,6 +19,11 @@ class CreateMilestoneRequest(BaseModel):
     content_ciphertext: str
 
 
+class UpdateMilestoneRequest(BaseModel):
+    event_date: Optional[date] = None
+    content_ciphertext: Optional[str] = None
+
+
 class MilestoneResponse(BaseModel):
     id: int
     family_id: int
@@ -112,3 +117,51 @@ async def get_milestones(
         )
         for m in milestones
     ]
+
+
+@router.put("/{milestone_id}", response_model=MilestoneResponse)
+async def update_milestone(
+    milestone_id: int,
+    request: UpdateMilestoneRequest,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)]
+):
+    result = await session.execute(
+        select(Milestone).where(Milestone.id == milestone_id)
+    )
+    milestone = result.scalar_one_or_none()
+    if not milestone:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Milestone not found"
+        )
+    
+    result = await session.execute(
+        select(FamilyMember).where(
+            FamilyMember.family_id == milestone.family_id,
+            FamilyMember.user_id == current_user.id
+        )
+    )
+    member = result.scalar_one_or_none()
+    if not member:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not a member of this family"
+        )
+    
+    if request.event_date is not None:
+        milestone.event_date = request.event_date
+    if request.content_ciphertext is not None:
+        milestone.content_ciphertext = request.content_ciphertext
+    
+    await session.commit()
+    await session.refresh(milestone)
+    
+    return MilestoneResponse(
+        id=milestone.id,
+        family_id=milestone.family_id,
+        creator_id=milestone.creator_id,
+        event_date=milestone.event_date,
+        content_ciphertext=milestone.content_ciphertext,
+        created_at=milestone.created_at
+    )
