@@ -38,7 +38,7 @@ Digital Home 是一个基于 FastAPI 的数字家庭后端服务，实现了零�
 #### FamilyMember (家庭成员)
 - `family_id`: 家庭ID
 - `user_id`: 用户ID
-- `role`: 角色（owner/member）
+- `role`: 角色（"男主人"、"女主人"、"儿子"、"女儿"、"爸爸"、"妈妈"、"岳父"、"岳母"）
 - `encrypted_family_key`: 加密的家庭密钥
 
 #### Milestone (里程碑)
@@ -215,7 +215,8 @@ GET /api/v1/auth/username?user_id=1
 ```json
 {
   "name": "我的家庭",
-  "encrypted_family_key": "encrypted_family_key_base64"
+  "encrypted_family_key": "encrypted_family_key_base64",
+  "role": "男主人"
 }
 ```
 
@@ -230,7 +231,8 @@ GET /api/v1/auth/username?user_id=1
 
 **说明**: 
 - `encrypted_family_key` 是用创建者的公钥加密的家庭密钥
-- 创建者自动成为家庭拥有者（owner）
+- `role` 是创建者的角色，可选值为 "男主人" 或 "女主人"，默认为 "男主人"
+- 创建者自动成为家庭成员
 
 ---
 
@@ -247,7 +249,8 @@ GET /api/v1/auth/username?user_id=1
 {
   "family_id": 1,
   "target_phone": "13900139000",
-  "encrypted_key_for_target": "encrypted_key_for_target_base64"
+  "encrypted_key_for_target": "encrypted_key_for_target_base64",
+  "role": "儿子"
 }
 ```
 
@@ -265,6 +268,7 @@ GET /api/v1/auth/username?user_id=1
 
 **说明**: 
 - `encrypted_key_for_target` 是用目标用户的公钥加密的家庭密钥
+- `role` 是成员的角色，可选值为 "男主人"、"女主人"、"儿子"、"女儿"、"爸爸"、"妈妈"、"岳父"、"岳母"，默认为 "儿子"
 - 只有家庭拥有者可以添加成员
 
 ---
@@ -282,14 +286,14 @@ GET /api/v1/auth/username?user_id=1
     "id": 1,
     "name": "我的家庭",
     "owner_id": 1,
-    "role": "owner",
+    "role": "男主人",
     "encrypted_family_key": "encrypted_key_base64"
   },
   {
     "id": 2,
     "name": "张三的家庭",
     "owner_id": 2,
-    "role": "member",
+    "role": "女儿",
     "encrypted_family_key": "encrypted_key_base64"
   }
 ]
@@ -322,13 +326,13 @@ GET /api/v1/family/1/members
     "user_id": 1,
     "phone": "13800138000",
     "username": "张三",
-    "role": "owner"
+    "role": "男主人"
   },
   {
     "user_id": 2,
     "phone": "13900139000",
     "username": "李四",
-    "role": "member"
+    "role": "女儿"
   }
 ]
 ```

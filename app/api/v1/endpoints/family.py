@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated, List, Literal
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +14,7 @@ router = APIRouter()
 class CreateFamilyRequest(BaseModel):
     name: str
     encrypted_family_key: str
+    role: Literal["男主人", "女主人"] = "男主人"
 
 
 class FamilyResponse(BaseModel):
@@ -26,6 +27,7 @@ class AddMemberRequest(BaseModel):
     family_id: int
     target_phone: str
     encrypted_key_for_target: str
+    role: Literal["男主人", "女主人", "儿子", "女儿", "爸爸", "妈妈", "岳父", "岳母"] = "儿子"
 
 
 class FamilyWithKeyResponse(BaseModel):
@@ -60,7 +62,7 @@ async def create_family(
     family_member = FamilyMember(
         family_id=family.id,
         user_id=current_user.id,
-        role="owner",
+        role=request.role,
         encrypted_family_key=request.encrypted_family_key
     )
     session.add(family_member)
@@ -121,7 +123,7 @@ async def add_member(
     family_member = FamilyMember(
         family_id=request.family_id,
         user_id=target_user.id,
-        role="member",
+        role=request.role,
         encrypted_family_key=request.encrypted_key_for_target
     )
     session.add(family_member)

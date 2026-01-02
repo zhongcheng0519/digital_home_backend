@@ -7,7 +7,7 @@ packages = ["app"]
 
 [project]
 name = "digital-home-backend"
-version = "1.2.0"
+version = "1.2.1"
 description = "Digital Home Backend with Zero-Knowledge End-to-End Encryption"
 readme = "README.md"
 license = {text = "Private"}
