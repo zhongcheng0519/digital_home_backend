@@ -36,6 +36,13 @@ class FamilyWithKeyResponse(BaseModel):
     encrypted_family_key: str
 
 
+class FamilyMemberResponse(BaseModel):
+    user_id: int
+    phone: str
+    username: str
+    role: str
+
+
 @router.post("/", response_model=FamilyResponse)
 async def create_family(
     request: CreateFamilyRequest,
@@ -146,3 +153,44 @@ async def get_my_families(
         ))
     
     return families
+
+
+@router.get("/{family_id}/members", response_model=List[FamilyMemberResponse])
+async def get_family_members(
+    family_id: int,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)]
+):
+    result = await session.execute(
+        select(FamilyMember).where(FamilyMember.family_id == family_id)
+    )
+    family_members = result.scalars().all()
+    
+    if not family_members:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Family not found"
+        )
+    
+    is_member = any(fm.user_id == current_user.id for fm in family_members)
+    if not is_member:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not a member of this family"
+        )
+    
+    members = []
+    for family_member in family_members:
+        result = await session.execute(
+            select(User).where(User.id == family_member.user_id)
+        )
+        user = result.scalar_one_or_none()
+        if user:
+            members.append(FamilyMemberResponse(
+                user_id=user.id,
+                phone=user.phone,
+                username=user.username,
+                role=family_member.role
+            ))
+    
+    return members
