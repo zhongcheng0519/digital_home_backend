@@ -1,4 +1,4 @@
-from typing import Annotated, List, Optional
+from typing import Annotated, List, Optional, Literal
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel
@@ -17,11 +17,13 @@ class CreateTodoRequest(BaseModel):
     family_id: int
     title_ciphertext: str
     description_ciphertext: Optional[str] = None
+    category: Optional[Literal["生活", "学习", "运动", "心愿"]] = "生活"
 
 
 class UpdateTodoRequest(BaseModel):
     title_ciphertext: Optional[str] = None
     description_ciphertext: Optional[str] = None
+    category: Optional[Literal["生活", "学习", "运动", "心愿"]] = None
     is_completed: Optional[bool] = None
 
 
@@ -31,6 +33,7 @@ class TodoResponse(BaseModel):
     creator_id: int
     title_ciphertext: str
     description_ciphertext: Optional[str]
+    category: Optional[Literal["生活", "学习", "运动", "心愿"]]
     is_completed: bool
     created_at: datetime
     updated_at: datetime
@@ -60,6 +63,7 @@ async def create_todo(
         creator_id=current_user.id,
         title_ciphertext=request.title_ciphertext,
         description_ciphertext=request.description_ciphertext,
+        category=request.category or "生活",
         is_completed=False
     )
     session.add(todo)
@@ -72,6 +76,7 @@ async def create_todo(
         creator_id=todo.creator_id,
         title_ciphertext=todo.title_ciphertext,
         description_ciphertext=todo.description_ciphertext,
+        category=todo.category,
         is_completed=todo.is_completed,
         created_at=todo.created_at,
         updated_at=todo.updated_at
@@ -110,6 +115,7 @@ async def get_todos(
             creator_id=t.creator_id,
             title_ciphertext=t.title_ciphertext,
             description_ciphertext=t.description_ciphertext,
+            category=t.category,
             is_completed=t.is_completed,
             created_at=t.created_at,
             updated_at=t.updated_at
@@ -152,6 +158,8 @@ async def update_todo(
         todo.title_ciphertext = request.title_ciphertext
     if request.description_ciphertext is not None:
         todo.description_ciphertext = request.description_ciphertext
+    if request.category is not None:
+        todo.category = request.category
     if request.is_completed is not None:
         todo.is_completed = request.is_completed
     
@@ -166,6 +174,7 @@ async def update_todo(
         creator_id=todo.creator_id,
         title_ciphertext=todo.title_ciphertext,
         description_ciphertext=todo.description_ciphertext,
+        category=todo.category,
         is_completed=todo.is_completed,
         created_at=todo.created_at,
         updated_at=todo.updated_at

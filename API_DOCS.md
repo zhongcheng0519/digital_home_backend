@@ -55,6 +55,7 @@ Digital Home 是一个基于 FastAPI 的数字家庭后端服务，实现了零�
 - `creator_id`: 创建者ID
 - `title_ciphertext`: 标题密文
 - `description_ciphertext`: 描述密文（可选）
+- `category`: 分类（可选，可选值："生活"、"学习"、"运动"、"心愿"，默认为"生活"）
 - `is_completed`: 是否完成
 - `created_at`: 创建时间
 - `updated_at`: 更新时间
@@ -492,7 +493,8 @@ GET /api/v1/milestone/?family_id=1&year=2024
 {
   "family_id": 1,
   "title_ciphertext": "encrypted_title_base64",
-  "description_ciphertext": "encrypted_description_base64"
+  "description_ciphertext": "encrypted_description_base64",
+  "category": "生活"
 }
 ```
 
@@ -504,6 +506,7 @@ GET /api/v1/milestone/?family_id=1&year=2024
   "creator_id": 1,
   "title_ciphertext": "encrypted_title_base64",
   "description_ciphertext": "encrypted_description_base64",
+  "category": "生活",
   "is_completed": false,
   "created_at": "2024-01-01T10:00:00",
   "updated_at": "2024-01-01T10:00:00"
@@ -516,6 +519,7 @@ GET /api/v1/milestone/?family_id=1&year=2024
 **说明**: 
 - `title_ciphertext` 是用家庭密钥加密的标题密文
 - `description_ciphertext` 是用家庭密钥加密的描述密文（可选）
+- `category` 是分类，可选值为 "生活"、"学习"、"运动"、"心愿"，默认为 "生活"
 - 任意家庭成员都可以创建待办事项
 
 ---
@@ -545,6 +549,7 @@ GET /api/v1/todo/?family_id=1
     "creator_id": 2,
     "title_ciphertext": "encrypted_title_base64",
     "description_ciphertext": "encrypted_description_base64",
+    "category": "学习",
     "is_completed": false,
     "created_at": "2024-01-02T09:00:00",
     "updated_at": "2024-01-02T09:00:00"
@@ -555,6 +560,7 @@ GET /api/v1/todo/?family_id=1
     "creator_id": 1,
     "title_ciphertext": "encrypted_title_base64",
     "description_ciphertext": "encrypted_description_base64",
+    "category": "生活",
     "is_completed": true,
     "created_at": "2024-01-01T10:00:00",
     "updated_at": "2024-01-01T15:00:00"
@@ -587,6 +593,7 @@ GET /api/v1/todo/?family_id=1
 {
   "title_ciphertext": "new_encrypted_title_base64",
   "description_ciphertext": "new_encrypted_description_base64",
+  "category": "运动",
   "is_completed": true
 }
 ```
@@ -599,6 +606,7 @@ GET /api/v1/todo/?family_id=1
   "creator_id": 1,
   "title_ciphertext": "new_encrypted_title_base64",
   "description_ciphertext": "new_encrypted_description_base64",
+  "category": "运动",
   "is_completed": true,
   "created_at": "2024-01-01T10:00:00",
   "updated_at": "2024-01-01T15:00:00"
