@@ -9,7 +9,7 @@ from sqlmodel import SQLModel
 from alembic import context
 
 from app.core.config import settings
-from app.models import User, Family, FamilyMember, Milestone, Todo
+from app.models import User, Family, FamilyMember, Milestone, Todo, Note
 
 config = context.config
 

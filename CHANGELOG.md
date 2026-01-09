@@ -1,63 +1,95 @@
-# Changelog
+# 变更日志
 
-All notable changes to this project will be documented in this file.
+本项目的所有重要变更都将记录在此文件中。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)，
+本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
+
+## [1.3.0] - 2026-01-09
+
+### 新增
+- 便利贴功能，用于家庭信息存储
+- 便利贴数据模型，包含标题、内容和分类字段
+- 便利贴的 CRUD API 接口（`POST /api/v1/note/`、`GET /api/v1/note/`、`PUT /api/v1/note/{note_id}`、`DELETE /api/v1/note/{note_id}`）
+- 便利贴分类支持（"地址信息"和"药方"）
+- 便利贴列表 API 支持按分类筛选
+- 创建便利贴表的数据库迁移脚本
+- 更新 API 文档，添加便利贴接口
+- 更新加密流程文档，添加便利贴创建和更新的说明
+
+### 安全
+- 所有便利贴数据使用家庭密钥加密（标题和内容）
+- 与其他家庭功能（里程碑、待办事项）采用相同的安全模型
+- 只有家庭成员可以访问和修改便利贴
+
+### 文档
+- 在 API_DOCS.md 中添加便利贴模型文档
+- 为所有便利贴接口添加完整的 API 文档
+- 添加便利贴的加密流程文档
+
+## [未发布]
+
+### 计划中
+- [ ] 用户资料管理
+- [ ] 文件上传支持
+- [ ] 实时通知
+- [ ] 管理员仪表板
+- [ ] 备份和恢复工具
+- [ ] 高级监控和日志记录
 
 ## [1.0.0] - 2024-12-27
 
-### Added
-- Initial release of Digital Home Backend
-- Zero-knowledge end-to-end encryption system
-- User registration and authentication with JWT
-- Family management (create, add members)
-- Milestone tracking with encrypted content
-- Docker support for easy deployment
-- Version management with release.sh script
-- Production-ready docker-compose configuration
-- Nginx reverse proxy configuration
-- Comprehensive API documentation
+### 新增
+- Digital Home Backend 初始版本
+- 零知识端到端加密系统
+- 用户注册和 JWT 身份验证
+- 家庭管理（创建、添加成员）
+- 带加密内容的里程碑跟踪
+- Docker 支持以便于部署
+- 使用 release.sh 脚本进行版本管理
+- 生产就绪的 docker-compose 配置
+- Nginx 反向代理配置
+- 完整的 API 文档
 
-### Security
-- All sensitive data encrypted on client-side
-- RSA key pair generation for users
-- AES encryption for family shared keys
-- Password-based encryption for user private keys
-- JWT-based authentication
-- bcrypt password hashing
+### 安全
+- 所有敏感数据在客户端加密
+- 为用户生成 RSA 密钥对
+- 使用 AES 加密家庭共享密钥
+- 基于密码的用户私钥加密
+- 基于 JWT 的身份验证
+- bcrypt 密码哈希
 
-### Deployment
-- Multi-stage Docker build for optimized images
-- Docker Compose for local development
-- Production Docker Compose configuration
-- Health checks for all services
-- Nginx configuration with rate limiting
-- Support for SSL/TLS
+### 部署
+- 多阶段 Docker 构建以优化镜像
+- 用于本地开发的 Docker Compose
+- 生产环境 Docker Compose 配置
+- 所有服务的健康检查
+- 带速率限制的 Nginx 配置
+- 支持 SSL/TLS
 
-### Documentation
-- API documentation (API_DOCS.md)
-- Deployment guide (DEPLOYMENT.md)
-- README with quick start guide
-- Encryption testing documentation
+### 文档
+- API 文档（API_DOCS.md）
+- 部署指南（DEPLOYMENT.md）
+- 带快速入门指南的 README
+- 加密测试文档
 
-## [Unreleased]
+## [未发布]
 
-### Changed
-- Added `private_key_salt` field to User model for secure key derivation
-- Updated registration API to accept and store `private_key_salt`
-- Updated login API to return `private_key_salt` for client-side decryption
-- Enhanced encryption flow documentation with PBKDF2 key derivation details
+### 变更
+- 在 User 模型中添加 `private_key_salt` 字段，用于安全密钥派生
+- 更新注册 API 以接受和存储 `private_key_salt`
+- 更新登录 API 以返回 `private_key_salt`，用于客户端解密
+- 增强加密流程文档，添加 PBKDF2 密钥派生详细信息
 
-### Security
-- Improved private key encryption with PBKDF2 and unique salt per user
-- Added salt-based key derivation to prevent rainbow table attacks
-- Updated encryption testing documentation with salt verification guidelines
+### 安全
+- 使用 PBKDF2 和每个用户的唯一 salt 改进私钥加密
+- 添加基于 salt 的密钥派生以防止彩虹表攻击
+- 更新加密测试文档，添加 salt 验证指南
 
-### Planned
-- [ ] User profile management
-- [ ] File upload support
-- [ ] Real-time notifications
-- [ ] Admin dashboard
-- [ ] Backup and restore tools
-- [ ] Advanced monitoring and logging
+### 计划中
+- [ ] 用户资料管理
+- [ ] 文件上传支持
+- [ ] 实时通知
+- [ ] 管理员仪表板
+- [ ] 备份和恢复工具
+- [ ] 高级监控和日志记录
