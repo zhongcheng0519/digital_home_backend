@@ -17,13 +17,13 @@ class CreateNoteRequest(BaseModel):
     family_id: int
     title_ciphertext: str
     content_ciphertext: str
-    category: Optional[Literal["地址信息", "药方"]] = "地址信息"
+    category: Optional[Literal["地址信息", "药方", "API密钥"]] = "地址信息"
 
 
 class UpdateNoteRequest(BaseModel):
     title_ciphertext: Optional[str] = None
     content_ciphertext: Optional[str] = None
-    category: Optional[Literal["地址信息", "药方"]] = None
+    category: Optional[Literal["地址信息", "药方", "API密钥"]] = None
 
 
 class NoteResponse(BaseModel):
@@ -32,7 +32,7 @@ class NoteResponse(BaseModel):
     creator_id: int
     title_ciphertext: str
     content_ciphertext: str
-    category: Optional[Literal["地址信息", "药方"]]
+    category: Optional[Literal["地址信息", "药方", "API密钥"]]
     created_at: datetime
     updated_at: datetime
 
@@ -82,7 +82,7 @@ async def create_note(
 @router.get("/", response_model=List[NoteResponse])
 async def get_notes(
     family_id: int = Query(...),
-    category: Optional[Literal["地址信息", "药方"]] = None,
+    category: Optional[Literal["地址信息", "药方", "API密钥"]] = None,
     *,
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)]

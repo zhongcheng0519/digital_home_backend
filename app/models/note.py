@@ -11,6 +11,6 @@ class Note(SQLModel, table=True):
     creator_id: int = Field(foreign_key="user.id")
     title_ciphertext: str = Field(sa_column=Column(String))
     content_ciphertext: str = Field(sa_column=Column(String))
-    category: Optional[Literal["地址信息", "药方"]] = Field(default="地址信息", sa_column=Column(String))
+    category: Optional[Literal["地址信息", "药方", "API密钥"]] = Field(default="地址信息", sa_column=Column(String))
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
