@@ -39,10 +39,6 @@ uv.lock
 *.swo
 *~
 
-# Alembic
-alembic/versions/*.py
-!alembic/versions/__init__.py
-
 # Database
 *.db
 *.sqlite
